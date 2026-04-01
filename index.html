@@ -1245,7 +1245,9 @@ async function fetchRates() {
 
       RATES_TO_INR["INR"] = 1;
 
-      calcCurrency();
+      if (typeof calcCurrency === "function") {
+  calcCurrency();
+}
 
       const el = document.getElementById("rateUpdateTime");
       if (el) {
@@ -1259,7 +1261,7 @@ async function fetchRates() {
 const CC_NAMES = { INR:'Indian Rupee',USD:'US Dollar',EUR:'Euro',GBP:'Brit. Pound',JPY:'Japanese Yen',AUD:'Aus. Dollar',CAD:'Can. Dollar',CHF:'Swiss Franc',CNY:'Chinese Yuan',SGD:'Singapore $',AED:'UAE Dirham',SAR:'Saudi Riyal',THB:'Thai Baht',MYR:'Malaysian Ringgit',IDR:'Indonesian Rupiah',KRW:'Korean Won',HKD:'HK Dollar',NZD:'NZ Dollar',ZAR:'S. African Rand',BRL:'Brazilian Real',MXN:'Mexican Peso',RUB:'Russian Ruble' };
 
 function initCurrency() {
-fetchRates();
+fetchRates(); //MUST be first
   const from = document.getElementById('ccFrom');
   const to = document.getElementById('ccTo');
   Object.keys(RATES_TO_INR).forEach(k => {
@@ -1270,6 +1272,10 @@ fetchRates();
 }
 
 function calcCurrency() {
+  function calcCurrency() {
+  if (!RATES_TO_INR || Object.keys(RATES_TO_INR).length === 0) 
+    return; // wait until rates load
+  }
   const amt = +document.getElementById('ccAmount').value || 0;
   const from = document.getElementById('ccFrom').value;
   const to = document.getElementById('ccTo').value;
@@ -1355,9 +1361,8 @@ calcLoan();
 renderInflation();
 calcSIP();
 calcFD();
-fetchRates();
-setInterval(fetchRates, 3600000);
 initCurrency();
+setInterval(fetchRates, 3600000);
 renderNW();
 </script>
 </body>
